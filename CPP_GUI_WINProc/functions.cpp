@@ -1,7 +1,6 @@
 #include <random>
 
-
-int randInt() {
+int randomInteger() {
 	srand(46943);
 	return rand() % 4000;
 }

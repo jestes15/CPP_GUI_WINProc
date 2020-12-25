@@ -21,10 +21,24 @@
     <ClCompile Include="functions.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="secondary.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Main.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="secondary.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="snow">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="snow_2">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
 </Project>

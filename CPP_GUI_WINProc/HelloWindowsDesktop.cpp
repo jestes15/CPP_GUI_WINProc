@@ -3,12 +3,15 @@
 
 
 #include "Main.h"
+#include "secondary.h"
 #pragma warning(suppress : 4996)
 
 //Entry point for the program
 int CALLBACK WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPSTR lpCmdLine, _In_ int nCmdShow)
 {
     WNDCLASSEX wcex;
+    //GdiplusStartupInput gdiplusStartupInput;
+    //ULONG_PTR           gdiplusToken;
 
     wcex.cbSize = sizeof(WNDCLASSEX);
     wcex.style = CS_HREDRAW | CS_VREDRAW;
@@ -98,29 +101,13 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     HDC hdc;
 
     RECT lp;
-    HWND Window = GetConsoleWindow();
-    GetWindowRect(Window, &lp);
+    RECT tp;
 
-    std::wstring left_str(L"Left: ");
-    std::wstring right_str(L"Right: ");
-    std::wstring top_str(L"Top: ");
-    std::wstring bottom_str(L"Bottom: ");
+    std::wstring left_str(L"Left: "), right_str(L"Right: "), top_str(L"Top: "), bottom_str(L"Bottom: "), rand_int_str(L"Your random number is"), menu,
+        left_num, right_num, top_num, bottom_num, rand_int, left, right, top, bottom,
+        random_int;
 
-    std::wstring left_num = std::to_wstring(lp.left);
-    std::wstring right_num = std::to_wstring(lp.right);
-    std::wstring top_num = std::to_wstring(lp.top);
-    std::wstring bottom_num = std::to_wstring(lp.bottom);
-
-    std::wstring left_combined = left_str + left_num;
-    std::wstring right_combined = right_str + right_num;
-    std::wstring top_combined = top_str + top_num;
-    std::wstring bottom_combined = bottom_str + bottom_num;
-
-    TCHAR* left_raw = (TCHAR*)left_combined.c_str();
-    TCHAR* right_raw = (TCHAR*)right_combined.c_str();
-    TCHAR* top_raw = (TCHAR*)top_combined.c_str();
-    TCHAR* bottom_raw = (TCHAR*)bottom_combined.c_str();
-
+    TCHAR* left_raw, *right_raw, *top_raw, *bottom_raw, *rand_int_msg, *msg;
     TCHAR usr_msg[] = L"I hope you like it!";
 
     switch (message)
@@ -128,6 +115,38 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     case WM_PAINT:
         hdc = BeginPaint(hWnd, &ps);
         SetBkMode(hdc, TRANSPARENT);
+
+        GetClientRect(hWnd, &lp);
+        GetClientRect(hWnd, &tp);
+
+        //Define the rectangle to draw the menu on
+        tp.left = 5;
+        tp.top = 135;
+        tp.right = 289;
+        tp.bottom = 412;
+
+        menu = get_wstring(1);
+
+        left_num = std::to_wstring(lp.left);
+        right_num = std::to_wstring(lp.right);
+        top_num = std::to_wstring(lp.top);
+        bottom_num = std::to_wstring(lp.bottom);
+        rand_int = std::to_wstring(randomInteger());
+
+        left = left_str + left_num;
+        right = right_str + right_num;
+        top = top_str + top_num;
+        bottom = bottom_str + bottom_num;
+        random_int = rand_int + rand_int;
+
+        left_raw = (TCHAR*)left.c_str();
+        right_raw = (TCHAR*)right.c_str();
+        top_raw = (TCHAR*)top.c_str();
+        bottom_raw = (TCHAR*)bottom.c_str();
+        rand_int_msg = (TCHAR*)random_int.c_str();
+
+
+        msg = (TCHAR*)menu.c_str();
 
         // Here your application is laid out.
         // For this introduction, we just print out "Hello, Windows desktop!"
@@ -137,10 +156,26 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         TextOut(hdc, 5, 20, right_raw, _tcslen(right_raw));
         TextOut(hdc, 5, 35, top_raw, _tcslen(top_raw));
         TextOut(hdc, 5, 50, bottom_raw, _tcslen(bottom_raw));
+        TextOut(hdc, 5, 65, rand_int_msg, _tcslen(rand_int_msg));
 
         TextOut(hdc, 5, 95, usr_msg, _tcslen(usr_msg));
+
+        //Work in progress
+        /*
+        Image image(L"Grapes.jpg");
+        graphics.DrawImage(&image, 60, 10);
+
+        HICON hIcon = LoadIcon(NULL, IDI_APPLICATION);
+        Bitmap bitmap(hIcon);
+        graphics.DrawImage(&bitmap, 10, 10);
+
+        SendMessage(hWnd, STM_SETIMAGE, IMAGE_BITMAP, (LPARAM)hImage);
+        */
+
+        DrawText(hdc, msg, -1, &tp, DT_INTERNAL | DT_LEFT | DT_VCENTER | DT_NOCLIP);
+
         // End application-specific layout section.
-        if (!Num)
+        if (!diag_num)
         {
             int DisplayConfirmSaveAsMessageBox();
             {
@@ -154,17 +189,17 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                 if (msgboxID == IDOK)
                 {
                     TCHAR usr_error_box_msg[] = L"Agreed to terms and conditions";
-                    TextOut(hdc, 5, 200, usr_error_box_msg, _tcslen(usr_error_box_msg));
+                    TextOut(hdc, 5, 110, usr_error_box_msg, _tcslen(usr_error_box_msg));
                 }
-                Num = 1;
+                diag_num = 1;
 
                 return msgboxID;
             }
         }
-        if (Num)
+        if (diag_num)
         {
             TCHAR usr_error_box_msg[] = L"Agreed to terms and conditions";
-            TextOut(hdc, 5, 200, usr_error_box_msg, _tcslen(usr_error_box_msg));
+            TextOut(hdc, 5, 110, usr_error_box_msg, _tcslen(usr_error_box_msg));
         }
 
         EndPaint(hWnd, &ps);
