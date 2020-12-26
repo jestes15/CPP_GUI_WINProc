@@ -116,6 +116,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     switch (message)
     {
     case WM_COMMAND:
+        // TODO Add all the commands passed from the menu here and do what it needs to do.
         switch (wParam) {
         case 1:
             MessageBeep(MB_OK);
@@ -128,10 +129,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                 return msgboxID;
             }
             break;
-        case 5:
-            MessageBeep(MB_ICONERROR);
-            break;
-        case 6:
+        case 3:
             int DisplayConfirmSaveAsMessageBox();
             {
                 MessageBeep(MB_OK);
@@ -145,8 +143,13 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
                 return msgboxID;
             }
+            break;
+        case 5:
+            MessageBeep(MB_ICONERROR);
+            break;
         }
         break;
+
     case WM_CREATE:
         MENU(hWnd);
         break;
@@ -236,9 +239,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
         EndPaint(hWnd, &ps);
         break;
+
     case WM_DESTROY:
         PostQuitMessage(0);
         break;
+
     default:
         return DefWindowProc(hWnd, message, wParam, lParam);
         break;
@@ -250,14 +255,20 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 void MENU(HWND hWnd) {
     hMenu = CreateMenu();
     HMENU hFileMenu = CreateMenu();
+    HMENU hSubFileMenu = CreateMenu();
 
     AppendMenu(hFileMenu, MF_STRING, 1, L"New");
-    AppendMenu(hFileMenu, MF_STRING, 2, L"Open");
+    AppendMenu(hFileMenu, MF_POPUP, (UINT)hSubFileMenu, L"Open");
+    AppendMenu(hFileMenu, MF_SEPARATOR, NULL, NULL);
+    AppendMenu(hFileMenu, MF_STRING, 3, L"Exit");
+
+    AppendMenu(hSubFileMenu, MF_STRING, 200, L"Folder");
+    AppendMenu(hSubFileMenu, MF_STRING, 201, L"Text");
+    AppendMenu(hSubFileMenu, MF_STRING, 202, L"Image");
+
 
     AppendMenu(hMenu, MF_POPUP, (UINT)hFileMenu, L"File");
     AppendMenu(hMenu, MF_STRING, 5, L"Help");
-    AppendMenu(hMenu, MF_STRING, 6, L"Exit");
 
-    //InsertMenuItem(hMenu, 0010, FALSE, L"Open File");
     SetMenu(hWnd, hMenu);
 }
