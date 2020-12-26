@@ -6,6 +6,9 @@
 #include "secondary.h"
 #pragma warning(suppress : 4996)
 
+//The menu for the top of the screen
+void MENU(HWND);
+
 //Entry point for the program
 int CALLBACK WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPSTR lpCmdLine, _In_ int nCmdShow)
 {
@@ -21,7 +24,7 @@ int CALLBACK WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance,
     wcex.hInstance = hInstance;
     wcex.hIcon = LoadIcon(hInstance, IDI_APPLICATION);
     wcex.hCursor = LoadCursor(NULL, IDC_ARROW);
-    wcex.hbrBackground = (HBRUSH)(COLOR_BACKGROUND + 3);
+    wcex.hbrBackground = (HBRUSH)(COLOR_BACKGROUND + 5);
     wcex.lpszMenuName = NULL;
     wcex.lpszClassName = szWindowClass;
     wcex.hIconSm = LoadIcon(wcex.hInstance, IDI_APPLICATION);
@@ -112,6 +115,35 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
     switch (message)
     {
+    case WM_COMMAND:
+        switch (wParam) {
+        case 1:
+            MessageBeep(MB_OK);
+            break;
+        case 5:
+            MessageBeep(MB_ICONERROR);
+            break;
+        case 6:
+            int DisplayConfirmSaveAsMessageBox();
+            {
+                MessageBeep(MB_OK);
+                int msgboxID = MessageBox(
+                    NULL, L"Are you sure you want to exit\nPress Yes to continue.",
+                    L"Exit", MB_ICONQUESTION | MB_YESNO | MB_DEFBUTTON1);
+
+                if (msgboxID == IDYES)
+                {
+                    PostQuitMessage(0);
+                }
+
+                return msgboxID;
+            }
+        }
+        break;
+    case WM_CREATE:
+        MENU(hWnd);
+        break;
+
     case WM_PAINT:
         hdc = BeginPaint(hWnd, &ps);
         SetBkMode(hdc, TRANSPARENT);
@@ -148,10 +180,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
         msg = (TCHAR*)menu.c_str();
 
-        // Here your application is laid out.
-        // For this introduction, we just print out "Hello, Windows desktop!"
-        // in the top left corner.
-
         TextOut(hdc, 5, 5, left_raw, _tcslen(left_raw));
         TextOut(hdc, 5, 20, right_raw, _tcslen(right_raw));
         TextOut(hdc, 5, 35, top_raw, _tcslen(top_raw));
@@ -180,11 +208,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             int DisplayConfirmSaveAsMessageBox();
             {
                 int msgboxID = MessageBox(
-                    NULL,
-                    L"Please Agree to the terms and conditions\nPress OK to continue",
-                    L"Terms and Conditions Agreement",
-                    MB_ICONEXCLAMATION | MB_OK
-                );
+                    NULL, L"Please Agree to the terms and conditions\nPress OK to continue", 
+                    L"Terms and Conditions Agreement", MB_ICONASTERISK | MB_OK);
 
                 if (msgboxID == IDOK)
                 {
@@ -213,4 +238,15 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     }
 
     return 0;
+}
+
+void MENU(HWND hWnd) {
+    hMenu = CreateMenu();
+
+    AppendMenu(hMenu, MF_STRING, 1, L"File");
+    AppendMenu(hMenu, MF_STRING, 5, L"Help");
+    AppendMenu(hMenu, MF_STRING, 6, L"Exit");
+
+    //InsertMenuItem(hMenu, 0010, FALSE, L"Open File");
+    SetMenu(hWnd, hMenu);
 }
