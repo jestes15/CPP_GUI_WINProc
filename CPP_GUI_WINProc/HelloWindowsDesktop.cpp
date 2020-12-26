@@ -120,6 +120,14 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         case 1:
             MessageBeep(MB_OK);
             break;
+        case 2:
+            MessageBeep(MB_ICONERROR);
+            int DisplayConfirmSaveAsMessageBox();
+            {
+                int msgboxID = MessageBox(NULL, L"I'm sorry, this option is not suported at this time.", NULL, MB_ICONWARNING | MB_OK);
+                return msgboxID;
+            }
+            break;
         case 5:
             MessageBeep(MB_ICONERROR);
             break;
@@ -127,8 +135,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             int DisplayConfirmSaveAsMessageBox();
             {
                 MessageBeep(MB_OK);
-                int msgboxID = MessageBox(
-                    NULL, L"Are you sure you want to exit\nPress Yes to continue.",
+                int msgboxID = MessageBox(NULL, L"Are you sure you want to exit\nPress Yes to continue.",
                     L"Exit", MB_ICONQUESTION | MB_YESNO | MB_DEFBUTTON1);
 
                 if (msgboxID == IDYES)
@@ -208,9 +215,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             int DisplayConfirmSaveAsMessageBox();
             {
                 int msgboxID = MessageBox(
-                    NULL, L"Please Agree to the terms and conditions\nPress OK to continue", 
+                    DiagBox, L"Please Agree to the terms and conditions\nPress OK to continue", 
                     L"Terms and Conditions Agreement", MB_ICONASTERISK | MB_OK);
-
+                SetForegroundWindow(DiagBox);
                 if (msgboxID == IDOK)
                 {
                     TCHAR usr_error_box_msg[] = L"Agreed to terms and conditions";
@@ -242,8 +249,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 void MENU(HWND hWnd) {
     hMenu = CreateMenu();
+    HMENU hFileMenu = CreateMenu();
 
-    AppendMenu(hMenu, MF_STRING, 1, L"File");
+    AppendMenu(hFileMenu, MF_STRING, 1, L"New");
+    AppendMenu(hFileMenu, MF_STRING, 2, L"Open");
+
+    AppendMenu(hMenu, MF_POPUP, (UINT)hFileMenu, L"File");
     AppendMenu(hMenu, MF_STRING, 5, L"Help");
     AppendMenu(hMenu, MF_STRING, 6, L"Exit");
 
