@@ -108,32 +108,21 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
     std::wstring left_str(L"Left: "), right_str(L"Right: "), top_str(L"Top: "), bottom_str(L"Bottom: "), rand_int_str(L"Your random number is"), menu,
         left_num, right_num, top_num, bottom_num, rand_int, left, right, top, bottom,
-        random_int;
+        random_int, text, version_text_combined;
 
-    TCHAR* left_raw, *right_raw, *top_raw, *bottom_raw, *rand_int_msg, *msg;
+    TCHAR* left_raw, *right_raw, *top_raw, *bottom_raw, *rand_int_msg, *msg, *version_str;
     TCHAR usr_msg[] = L"I hope you like it!";
 
     switch (message)
     {
     case WM_COMMAND:
-        // TODO Add all the commands passed from the menu here and do what it needs to do.
+        // TODO: Add all the commands passed from the menu here and do what it needs to do.
         switch (wParam) {
-        case 1:
-            MessageBeep(MB_OK);
-            break;
-        case 2:
-            MessageBeep(MB_ICONERROR);
-            int DisplayConfirmSaveAsMessageBox();
-            {
-                int msgboxID = MessageBox(NULL, L"I'm sorry, this option is not suported at this time.", NULL, MB_ICONWARNING | MB_OK);
-                return msgboxID;
-            }
-            break;
-        case 3:
+        case FMENU_EXIT:
             int DisplayConfirmSaveAsMessageBox();
             {
                 MessageBeep(MB_OK);
-                int msgboxID = MessageBox(NULL, L"Are you sure you want to exit\nPress Yes to continue.",
+                int msgboxID = MessageBox(NULL, L"Are you sure you want to exit?",
                     L"Exit", MB_ICONQUESTION | MB_YESNO | MB_DEFBUTTON1);
 
                 if (msgboxID == IDYES)
@@ -144,11 +133,31 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                 return msgboxID;
             }
             break;
-        case 5:
-            MessageBeep(MB_ICONERROR);
+        case HMENU_ABOUT:
+            text = L"This program is just my play toy and help me learn the Win32 API\nVersion: ";
+            version_text_combined = text + VERSION_NUMBER;
+            version_str = (TCHAR*)version_text_combined.c_str();
+            int DisplayConfirmSaveAsMessageBox();
+            {
+                MessageBeep(MB_OK);
+                int msgboxID = MessageBox(NULL, version_str,
+                    L"About CPP_GUI_WINProc", MB_ICONQUESTION | MB_OK | MB_DEFBUTTON1);
+
+                return msgboxID;
+            }
             break;
+        default:
+            if (wParam == FMENU_NEW || wParam == FMENU_OPEN_FOLDER || wParam == FMENU_OPEN_IMAGE || wParam == FMENU_OPEN_TEXT) {
+                MessageBeep(MB_ICONERROR);
+                int DisplayConfirmSaveAsMessageBox();
+                {
+                    int msgboxID = MessageBox(NULL, L"I'm sorry, this option is not suported at this time.", NULL, MB_ICONWARNING | MB_OK);
+                    return msgboxID;
+                }
+            }
         }
         break;
+        
 
     case WM_CREATE:
         MENU(hWnd);
@@ -189,6 +198,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 
         msg = (TCHAR*)menu.c_str();
+        SetTextJustification(hdc, 1, 1);
 
         TextOut(hdc, 5, 5, left_raw, _tcslen(left_raw));
         TextOut(hdc, 5, 20, right_raw, _tcslen(right_raw));
@@ -253,22 +263,32 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 }
 
 void MENU(HWND hWnd) {
+    //The main menu
     hMenu = CreateMenu();
+
+    //All children of the main menu
     HMENU hFileMenu = CreateMenu();
+    HMENU hHelpMenu = CreateMenu();
+
+    //All sub menus
     HMENU hSubFileMenu = CreateMenu();
 
-    AppendMenu(hFileMenu, MF_STRING, 1, L"New");
+    //File Menu
+    AppendMenu(hMenu, MF_POPUP, (UINT)hFileMenu, L"File");
+    AppendMenu(hFileMenu, MF_STRING, FMENU_NEW, L"New");
     AppendMenu(hFileMenu, MF_POPUP, (UINT)hSubFileMenu, L"Open");
     AppendMenu(hFileMenu, MF_SEPARATOR, NULL, NULL);
-    AppendMenu(hFileMenu, MF_STRING, 3, L"Exit");
+    AppendMenu(hFileMenu, MF_STRING, FMENU_EXIT, L"Exit");
 
-    AppendMenu(hSubFileMenu, MF_STRING, 200, L"Folder");
-    AppendMenu(hSubFileMenu, MF_STRING, 201, L"Text");
-    AppendMenu(hSubFileMenu, MF_STRING, 202, L"Image");
+    //Open Menu within the file menu
+    AppendMenu(hSubFileMenu, MF_STRING, FMENU_OPEN_FOLDER, L"Folder");
+    AppendMenu(hSubFileMenu, MF_STRING, FMENU_OPEN_TEXT, L"Text");
+    AppendMenu(hSubFileMenu, MF_STRING, FMENU_OPEN_IMAGE, L"Image");
 
+    //Help Menu
 
-    AppendMenu(hMenu, MF_POPUP, (UINT)hFileMenu, L"File");
-    AppendMenu(hMenu, MF_STRING, 5, L"Help");
+    AppendMenu(hMenu, MF_POPUP, (UINT)hHelpMenu, L"Help");
+    AppendMenu(hHelpMenu, MF_STRING, HMENU_ABOUT, L"About");
 
     SetMenu(hWnd, hMenu);
 }

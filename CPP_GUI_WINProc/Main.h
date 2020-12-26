@@ -7,9 +7,20 @@
 #include <atlstr.h>
 #include <objidl.h>
 #include <gdiplus.h>
+#include <gdiplusheaders.h>
 
 // Global variables
 int diag_num = 0;
+
+#define FMENU_NEW 100
+#define FMENU_EXIT 101
+#define FMENU_OPEN_FOLDER 200
+#define FMENU_OPEN_TEXT 201
+#define FMENU_OPEN_IMAGE 202
+
+#define HMENU_ABOUT 301
+
+std::wstring VERSION_NUMBER(L"0.1.6");
 
 // The main window class name.
 static TCHAR szWindowClass[] = _T("DesktopApp");
